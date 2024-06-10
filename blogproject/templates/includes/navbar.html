@@ -1,0 +1,57 @@
+{% load static %}
+
+<nav class="navbar navbar-expand-lg bg-dark py-3"> 
+    <div class="container-fluid">
+        <a class="navbar-brand text-light" href="{% url 'home' %}">
+            <span class="text-primary fw-bold fs-3">Wung's</span> Blog
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation"> 
+            <span class="navbar-toggler-icon bg-light"></span> 
+        </button>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+            <form class="d-flex mx-auto w-50" role="search" id="searchForm" method="GET"> 
+                <input class="form-control me-2" type="search" id="searchInput" value="{{ q }}" name="q" placeholder="Search post by title, content or author" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button> 
+            </form> 
+            <ul class="navbar-nav ms-3 mb-2 mb-lg-0 align-items-center"> 
+                <li class="nav-item"> 
+                    {% if request.user.is_authenticated %}
+                        <a class="btn btn-primary ps-3 me-4" href="{% url 'logout' %}">Logout</a> 
+                    {% else %}
+                        <a class="btn btn-primary ps-3 me-4" href="{% url 'login' %}">Login/Signup</a>
+                    {% endif %}
+                </li> 
+                {% if request.user.is_authenticated and user_profile %}
+                <li class="nav-item d-flex align-items-center me-4"> 
+                    <a class="nav-link text-light" href="{% url 'profile' request.user.id %}"> 
+                        {% if user_profile.profile_picture %}
+                            <img src="{{ user_profile.profile_picture.url }}" width="40" height="40" class="profile-picture rounded-circle mb-1" alt="Profile Picture">
+                        {% else %}
+                            <img src="{% static 'images/th.jpeg' %}" class="rounded-circle me-2" width="40" height="40" alt="User Profile">
+                        {% endif %}
+                        <span class="text-capitalize">{{ request.user.username }}</span>
+                    </a>
+                </li>
+                {% endif %}
+                {% if request.user.is_authenticated %}
+                <li class="nav-item"> 
+                    <a class="btn btn-success me-4" href="{% url 'create-post' %}">Create</a> 
+                </li>
+                {% endif %}
+            </ul>
+        </div> 
+    </div>
+</nav>
+
+<script>
+    document.getElementById('searchForm').onsubmit = function(event) {
+        event.preventDefault();
+        const query = document.getElementById('searchInput').value;
+        if (query) {
+            this.action = `/search/` + encodeURIComponent(query) + `/`;
+            this.submit();
+            // Clear the input field
+            document.getElementById('searchInput').value = '';
+        }
+    };
+</script>

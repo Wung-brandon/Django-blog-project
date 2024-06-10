@@ -1,0 +1,78 @@
+{% extends 'includes/base.html' %}
+
+{% load static %}
+{% block content %}
+<div class="container my-5">
+    <div class="d-flex flex-column align-items-center mb-4">
+        {% if request.user.is_authenticated and not request.session.welcome_message_shown %}
+        <div class="alert alert-success alert-dismissible fade fixed-alert" role="alert">
+            Welcome, {{ user.username }}!
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+    </div>
+    <!-- <h4 class="mb-4">Posts</h4> -->
+    {% for post in posts %}
+    <div class="card mb-3 shadow">
+        <div class="card-body">
+            <a href="{% url 'profile' post.author.id %}" class="text-decoration-none mt-3">
+                {% if post.author.userprofile.profile_picture %}
+                    <img src="{{ post.author.userprofile.profile_picture.url }}"  width="40" height="40" class="profile-picture rounded-circle mb-1" alt="Profile Picture">
+                {% else %}
+                    <img src="{% static 'images/th.jpeg' %}" class="rounded-circle me-2" width="40" height="40" alt="User Profile">
+                {% endif %}
+                <small class="text-muted text-capitalize me-2">{{ post.author }}</small>
+            </a>
+            <h3 class="card-title mt-3">
+                <a href="{% url 'detail' post.id %}" class="heading text-decoration-none text-primary text-capitalize mt-6">{{ post.title }}</a>
+            </h3>
+            {% if post.content|wordcount > 20 %}
+            <a href="{% url 'detail' post.id %}" class="text-decoration-none text-dark ">
+                <p class="card-text text-capitalize mt-3">{{ post.content|truncatewords:20 }}
+                    <span class="read-more text-primary">Read More</span>
+                </p>
+            </a>
+            {% else %}
+                <p class="card-text text-capitalize mt-3">{{ post.content }}
+            {% endif %}
+            <hr>
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="{% url 'comment-post' post.id %}" class="text-decoration-none"><small>Comments: {{post.comment_count}}</small></a>
+                <small class="text-muted">{{ post.created|timesince }} ago</small>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+    <style>
+        .fixed-alert {
+            position: fixed;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            width: 100%;
+            max-width: 500px; /* Adjust the width as needed */
+        }
+        .container.my-5 {
+            margin-top: 70px; /* Add margin top to create space for the fixed alert */
+        }
+    </style>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var alert = document.querySelector('.alert');
+            if (alert) {
+                setTimeout(function () {
+                    var alertInstance = new bootstrap.Alert(alert);
+                    alertInstance.close();
+                }, 5000); // Auto dismiss after 5 seconds
+            }
+        });
+    </script>
+{% endblock %}

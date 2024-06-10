@@ -1,0 +1,75 @@
+{% load static %}
+{% load comment_extras %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center">
+    {% if post.comment_count <= 1 %}
+        <small>Comment: {{ post.comment_count }}</small>
+    {% elif post.comment_count > 1 %}
+        <small>Comments: {{ post.comment_count }}</small>
+    {% endif %}
+    <small class="text-muted">{{ post.created|timesince }} ago</small>
+</div>
+
+{% if post.comment_count > 0 %}
+<div class="accordion mt-3" id="commentsAccordion">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingOne">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                View Comments ({{ post.comment_count }})
+            </button>
+        </h2>
+        <div id="collapseOne" class="accordion-collapse collapse hide" aria-labelledby="headingOne" data-bs-parent="#commentsAccordion">
+            <div class="accordion-body">
+                {% for comment in comments %}
+                <div class="mb-2">
+                    <div>
+                        <div class="d-flex align-items-center mb-3">
+                            <a href="" class="text-decoration-none me-2 mt-3">
+                                {% with profile=comment_profiles|get_profile:comment.author %}
+                                    {% if profile.profile_picture %}
+                                        <img src="{{ profile.profile_picture.url }}" width="40" height="40" class="profile-picture rounded-circle mb-2" alt="Profile Picture">
+                                    {% else %}
+                                        <img src="{% static 'images/th.jpeg' %}" class="rounded-circle me-2" width="40" height="40" alt="User Profile">
+                                    {% endif %}
+                                    <small class="text-muted text-capitalize mt-2 ms-2">{{ comment.author }}</small>
+                                {% endwith %}
+                            </a>
+                        </div>
+                        <p class="text-capitalize">{{ comment.content }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small>{{ comment.created|timesince }} ago</small>
+                        </div>
+                        <div>
+                            {% if request.user == comment.author %}
+                            <div class="room__topRight mt-2 text-decoration-none">
+                                <a href="{% url 'edit-comment' comment.id %}" class="me-3 text-decoration-none">Edit</a>
+                                <a href="{% url 'delete-comment' comment.id %}" class="text-danger text-decoration-none">Delete</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<p>No comments yet.</p>
+{% endif %}
+
+<!-- Comment Form -->
+<div class="mt-4">
+    <form action="" method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="comment" class="form-label">Add a comment</label>
+            <textarea class="form-control" id="comment" name="content" rows="2" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'includes/base.html' %}
+
+{% load static %}
+{% block content %}
+
+
+    <style>
+        /* Custom styles here */
+        .profile-picture {
+            max-width: 150px;
+            border-radius: 50%;
+        }
+    </style>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card mt-5">
+                <a href="{% url 'home' %}">
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="18" class="mb-2 mt-2 ms-3" height="18"
+                        viewBox="0 0 32 32">
+                        <title>arrow-left</title>
+                        <path
+                            d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z">
+                        </path>
+                    </svg>
+                </a>
+                <div class="card-header">
+                    User Profile
+                </div>
+                <div class="card-body text-center">
+                    {% if user_profile.profile_picture %}
+                        <img src="{{ user_profile.profile_picture.url }}" class="profile-picture mb-3" alt="Profile Picture">
+                    {% else %}
+                        <img src="{% static 'images/th.jpeg' %}" class="rounded-circle me-2" width="40" height="40" alt="User Profile">
+                    {% endif %}
+                    <h5 class="card-title text-capitalize">{{ user.username }}</h5>
+                    <!-- <strong class="h4 mt-2">About</strong> -->
+                    <p class="card-text text-capitalize">{{ user_profile.bio }}</p>
+                    <small class="card-text text-capitalize">Email: {{user.email}}</small> <br>
+                    {% if request.user.is_authenticated and request.user == user%}
+                        <a href="{% url 'edit-user' user.id %}" class="btn btn-primary mt-4">Edit Profile</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}

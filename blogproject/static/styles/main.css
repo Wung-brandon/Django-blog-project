@@ -1,0 +1,31 @@
+
+
+.heading{
+    color: blue;
+}
+
+/* styles/main.css */
+
+.alert-custom {
+    width: 300px; /* Set the custom width */
+    position: relative; /* Needed for absolute positioning of the close button */
+    transition: transform 0.5s ease-out; /* Smooth sliding transition */
+}
+
+.alert-slide-out {
+    transform: translateX(100%); /* Slide to the right */
+}
+
+/* styles/main.css */
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+#content {
+    flex: 1;
+}
